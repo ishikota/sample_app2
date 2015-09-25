@@ -47,6 +47,10 @@ Spork.prefork do
     #     --seed 1234
     config.order = "random"
     config.include Capybara::DSL
+    #Disable the old-styled object.should syntax
+    config.expect_with :rspec do |c|
+      c.syntax = :expect
+    end
   end
 end
 
