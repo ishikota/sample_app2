@@ -36,4 +36,46 @@ describe "UserPages" do
       end
     end
   end
+  
+  describe "Error messages" do
+    let(:invalid_user) { FactoryGirl.create(:user) }
+    before do
+      visit signup_path
+      invalid_user.email = ""
+      invalid_user.password = "aiueo"
+      invalid_user.password_confirmation = "nanin"
+    end
+    
+    describe "Signup with invalid information" do
+      before do
+        fill_in "Name", with: invalid_user.name
+        fill_in "Email", with: invalid_user.email
+        fill_in "Password", with: invalid_user.password
+        fill_in "Confirmation", with: invalid_user.password_confirmation
+        click_button "Create my account"
+      end
+
+      it { should have_content("error") }
+      
+      it "should display error messages" do
+        invalid_user.errors.full_messages.each do |msg|
+          it { should have_content(msg) }
+        end
+      end
+    end
+
+    describe "signup with valid information" do
+      before do
+        fill_in "Name", with: "Example User"
+        fill_in "Email", with: "user@example.com"
+        fill_in "Password", with: "foobar"
+        fill_in "Confirmation", with: "foobar"
+        click_button "Create my account"
+      end
+      it { should_not have_content("error") }
+      it { should have_title("Example User") }
+      it { should have_selector('div.alert.alert-success', text: 'Welcome') }
+    end
+  end
+
 end
