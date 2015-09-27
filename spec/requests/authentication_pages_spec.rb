@@ -101,6 +101,26 @@ describe "AuthenticationPages" do
       end
     end
 
+    describe "signed in user" do
+      let(:user) { FactoryGirl.create(:user) }
+      before { sign_in user }
+
+      describe "access new action" do
+        before { visit new_user_path }
+        it { should_not have_title(full_title("Sign up")) }
+      end
+
+=begin
+      describe "accesss create action" do
+        let(:params) do
+          { user: { name:user.name, email:user.email,password:user.password,
+                    password_confirmation:user.password} }
+        end
+        before { post users_path, params}
+        specify { expect(response).to redirect_to(root_path) }
+      end
+=end
+    end
   end
 end
 
