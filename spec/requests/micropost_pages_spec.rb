@@ -37,4 +37,53 @@ describe "MicropostPages" do
       end
     end
   end
+
+  describe "micropost count" do
+    before do
+      user.microposts.create(content: "aaa")
+    end
+
+    describe "a micropost" do
+      before { visit root_path }
+      specify { expect(page).to have_content("1 micropost") }
+    end
+
+    describe "multi microposts" do
+      before do
+        user.microposts.create(content: "bbb")
+        visit root_path
+      end
+      specify { expect(page).to have_content("2 microposts") }
+    end
+  end
+
+  describe "pagenation" do
+    before do
+     31.times do |i|
+       user.microposts.create(content: "#{i}aaa")
+     end
+     visit root_path
+    end
+    it { should have_content("1aaa") }
+    it { should_not have_content("31aaa") }
+  end
+
+=begin exercise 4
+  describe "feed delete not displayed" do
+    let(:other_user) { FactoryGirl.create(:user) }
+    let(:post) { other_user.microposts.build(content: "hoge") }
+
+    before do
+      user.feed.append(post)
+      visit root_path
+    end
+
+    it { should have_title("Sample App") }
+    it { should have_content("hoge") }
+    it { should_not have_content("delete") }
+  end
+=end
+
+
+
 end
