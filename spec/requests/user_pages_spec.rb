@@ -114,6 +114,35 @@ describe "UserPages" do
 
   end
 
+  describe "following/followers stats in profile page" do
+    let(:follower) { FactoryGirl.create(:user) }
+    let(:followed) { FactoryGirl.create(:user) }
+    before { follower.follow!(followed) }
+
+    describe "followed user page stats" do
+      before do
+        sign_in followed
+        visit followers_user_path(followed)
+      end
+      it { should have_title(full_title("Followers")) }
+      it { should have_content("1 followers") }
+      it { should have_content("0 following") }
+    end
+
+    describe "follower user page stats" do
+      before do
+        sign_in follower
+        visit following_user_path(follower)
+      end
+      it { should have_title(full_title("Following")) }
+      it { should have_content("0 followers") }
+      it { should have_content("1 following") }
+    end
+  end
+
+
+
+
   describe "signup" do
     before { visit signup_path }
     it { should have_content("Sign up") }
